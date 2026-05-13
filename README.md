@@ -344,7 +344,7 @@ This project reflects product thinking as much as engineering:
 ## Author
 **Feisal Aden**
 
-- LinkedIn: `[Add your LinkedIn profile here]`
+- LinkedIn: `[www.linkedin.com/in/feisal-yakub-b4775a2ab]`
 - GitHub: [Feisaladen](https://github.com/Feisaladen)
 - Vision: building digital infrastructure that solves practical African market problems
 
