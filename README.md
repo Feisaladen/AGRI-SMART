@@ -16,10 +16,7 @@
 Agri-Smart is a full-stack marketplace platform built to solve a real, local problem in Kenya: farmers often produce value but do not control the market. Middlemen distort prices, farmers lose margin, and buyers still pay more for less freshness. Agri-Smart closes that gap by connecting farmers directly to buyers, powering transactions with M-Pesa, and equipping farmers with an AI advisor for sales and financial guidance. This was built in 5 weeks by a solo developer, not as a classroom exercise, but as a production-minded product with a clear goal: deploy it, secure `agrismart.co.ke`, and onboard real Kenyan farmers.
 
 ## Live Demo
-- Frontend: `https://your-vercel-demo-link.vercel.app`
-- Backend API: `https://your-render-api-link.onrender.com`
-- Planned production domain: `https://agrismart.co.ke`
-
+.....(soon)
 ## Core Features
 ### Farmer Side
 - Role-based authentication with Clerk
