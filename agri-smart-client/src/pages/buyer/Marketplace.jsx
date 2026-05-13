@@ -25,14 +25,14 @@ const Marketplace = () => {
   return (
     <div className="flex min-h-screen bg-stone-100">
       <BuyerSidebar />
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-8">
         <div className="mx-auto max-w-5xl space-y-6">
           <div>
             <h1 className="text-2xl font-semibold text-stone-900">Marketplace 🛍️</h1>
             <p className="mt-1 text-sm text-stone-500">Discover products sourced directly from farms.</p>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <input
               type="text"
               value={search}
@@ -40,7 +40,7 @@ const Marketplace = () => {
               placeholder="Search products..."
               className="w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500"
             />
-            <div className="shrink-0 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-medium text-white">
+            <div className="shrink-0 rounded-xl bg-emerald-700 px-5 py-3 text-center text-sm font-medium text-white">
               {filteredProducts.length} items
             </div>
           </div>

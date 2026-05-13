@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useUser } from '@clerk/clerk-react'
 import axios from '../../api/axios'
 import toast from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 import FarmerSidebar from '../../components/FarmerSidebar'
 import Topbar from '../../components/Topbar'
 import { DashboardSkeleton } from '../../components/Skeleton'
@@ -15,6 +16,7 @@ const STATUS_STYLES = {
 
 const OrderManagement = () => {
   const { user } = useUser()
+  const navigate = useNavigate()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
@@ -23,9 +25,17 @@ const OrderManagement = () => {
     if (!user) return
     axios.get(`/api/orders/farm/${user.id}`)
       .then(res => setOrders(Array.isArray(res.data) ? res.data : []))
-      .catch(() => toast.error('Failed to load orders'))
+      .catch((error) => {
+        console.log(error)
+        if (error.response?.status === 404 && error.response?.data?.message?.toLowerCase().includes('farm')) {
+          toast.error('Create your farm profile first.')
+          navigate('/farm-profile')
+          return
+        }
+        toast.error('Failed to load orders')
+      })
       .finally(() => setLoading(false))
-  }, [user])
+  }, [navigate, user])
 
   const handleStatusUpdate = async (orderId, status) => {
     try {
@@ -56,7 +66,7 @@ const OrderManagement = () => {
           notificationCount={counts.pending}
           notificationPath="/farmer/orders"
         />
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-8">
           <div className="mx-auto max-w-5xl space-y-6">
 
             {/* Header */}

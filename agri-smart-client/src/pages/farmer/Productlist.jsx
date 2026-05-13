@@ -17,7 +17,15 @@ const ProductList = () => {
     if (!user) return
     axios.get(`/api/products/farm/${user.id}`)
       .then(res => setProducts(Array.isArray(res.data) ? res.data : []))
-      .catch(() => toast.error('Failed to load products'))
+      .catch((error) => {
+        console.log(error)
+        if (error.response?.status === 404 && error.response?.data?.message?.toLowerCase().includes('farm')) {
+          toast.error('Create your farm profile first.')
+          navigate('/farm-profile')
+          return
+        }
+        toast.error('Failed to load products')
+      })
       .finally(() => setLoading(false))
   }, [user])
 
@@ -47,11 +55,11 @@ const ProductList = () => {
       <FarmerSidebar dashboard={{}} />
       <div className="flex flex-1 flex-col">
         <Topbar title="My Products" />
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-8">
           <div className="mx-auto max-w-5xl space-y-6">
 
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-semibold text-stone-900">My Products</h1>
                 <p className="mt-1 text-sm text-stone-500">{products.length} listing{products.length !== 1 ? 's' : ''} on the marketplace</p>

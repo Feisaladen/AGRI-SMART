@@ -25,14 +25,24 @@ const AddProduct = () => {
   }
 
   const handleSubmit = async () => {
+    if (!form.name || !form.price || !form.quantity || !form.unit) {
+      toast.error('Please fill in name, price, quantity, and unit.')
+      return
+    }
+
     try {
       setLoading(true)
       await axios.post('/api/products/create', { clerkId: user.id, ...form })
-      toast.success('Product added! 🌾')
+      toast.success('Product added!')
       navigate('/farmer/products')
     } catch (error) {
       console.log(error)
-      toast.error('Failed to add product.')
+      if (error.response?.status === 404 && error.response?.data?.message?.toLowerCase().includes('farm')) {
+        toast.error('Create your farm profile before adding products.')
+        navigate('/farm-profile')
+        return
+      }
+      toast.error(error.response?.data?.message || 'Failed to add product.')
     } finally {
       setLoading(false)
     }
@@ -43,7 +53,7 @@ const AddProduct = () => {
       <FarmerSidebar dashboard={{}} />
       <div className="flex flex-1 flex-col">
         <Topbar title="Add Product" />
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-8">
           <div className="mx-auto max-w-2xl space-y-6">
             <div className="rounded-2xl bg-white p-8 shadow-sm">
               <h2 className="text-lg font-semibold text-stone-900">Product Details</h2>
@@ -85,7 +95,7 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              <div className="mt-6 flex gap-3">
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <button onClick={handleSubmit} disabled={loading} className="rounded-xl bg-emerald-700 px-6 py-3 text-sm font-medium text-white transition hover:bg-emerald-800 disabled:bg-emerald-300">
                   {loading ? 'Saving...' : 'Add Product'}
                 </button>

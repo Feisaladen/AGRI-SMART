@@ -11,21 +11,38 @@ const Checkout = () => {
   const navigate = useNavigate()
   const { cartItems, total, clearCart } = useCart()
   const [loading, setLoading] = useState(false)
+  const [phone, setPhone] = useState('')
 
-  const handlePlaceOrder = async () => {
+  const handleSubmit = async () => {
     if (!user?.id || cartItems.length === 0) return
+
+    const trimmedPhone = phone.trim()
+    const formattedPhone = trimmedPhone.startsWith('0')
+      ? `254${trimmedPhone.slice(1)}`
+      : trimmedPhone
+
     try {
       setLoading(true)
+
       for (const item of cartItems) {
-        await axios.post('/api/checkout', {
+        const itemTotal = Number(item.price) * Number(item.quantity)
+
+        const orderResponse = await axios.post('/api/orders/create', {
           clerkId: user.id,
           productId: item._id,
           quantity: item.quantity,
-          totalPrice: Number(item.price) * Number(item.quantity)
+          totalPrice: itemTotal
+        })
+
+        await axios.post('/api/payments/stk-push', {
+          phone: formattedPhone,
+          amount: itemTotal,
+          orderId: orderResponse.data._id
         })
       }
+
       clearCart()
-      toast.success('Order placed successfully! 📦')
+      toast.success('Order placed successfully!')
       navigate('/buyer/orders')
     } catch (error) {
       console.log(error)
@@ -38,10 +55,10 @@ const Checkout = () => {
   return (
     <div className="flex min-h-screen bg-stone-100">
       <BuyerSidebar />
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-8">
         <div className="mx-auto max-w-4xl space-y-6">
           <div>
-            <h1 className="text-2xl font-semibold text-stone-900">Checkout ✅</h1>
+            <h1 className="text-2xl font-semibold text-stone-900">Checkout</h1>
             <p className="mt-1 text-sm text-stone-500">Confirm your order before placing it.</p>
           </div>
 
@@ -62,12 +79,16 @@ const Checkout = () => {
                 <h2 className="text-lg font-semibold text-stone-900">Order Items</h2>
                 <div className="mt-4 space-y-3">
                   {cartItems.map((item) => (
-                    <div key={item._id} className="flex items-center justify-between rounded-xl bg-stone-50 px-4 py-3">
+                    <div key={item._id} className="flex flex-col gap-2 rounded-xl bg-stone-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="font-medium text-stone-900">{item.name}</p>
-                        <p className="mt-0.5 text-sm text-stone-400">Qty: {item.quantity} × KSh {Number(item.price).toLocaleString()}</p>
+                        <p className="mt-0.5 text-sm text-stone-400">
+                          Qty: {item.quantity} x KSh {Number(item.price).toLocaleString()}
+                        </p>
                       </div>
-                      <p className="font-semibold text-stone-900">KSh {Number(item.price * item.quantity).toLocaleString()}</p>
+                      <p className="font-semibold text-stone-900">
+                        KSh {Number(item.price * item.quantity).toLocaleString()}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -83,18 +104,28 @@ const Checkout = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>Payment</span>
-                    <span className="font-medium text-stone-900">Coming Soon</span>
+                    <span className="font-medium text-stone-900">M-Pesa</span>
                   </div>
                 </div>
                 <div className="mt-5 flex flex-col gap-3">
+                  <input
+                    type="text"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Enter M-Pesa phone number (07XXXXXXXX)"
+                    className="rounded-xl border border-emerald-500 px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-emerald-600"
+                  />
                   <button
                     type="button"
-                    onClick={handlePlaceOrder}
+                    onClick={handleSubmit}
                     disabled={loading}
                     className="rounded-xl bg-emerald-700 py-3 text-sm font-medium text-white transition hover:bg-emerald-800 disabled:bg-emerald-400"
                   >
                     {loading ? 'Placing Order...' : 'Place Order'}
                   </button>
+                  <p className="text-sm text-stone-500">
+                    You will receive an M-Pesa prompt on your phone to complete payment
+                  </p>
                   <button
                     type="button"
                     onClick={() => navigate('/buyer/cart')}

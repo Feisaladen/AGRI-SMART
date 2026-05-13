@@ -10,6 +10,12 @@ const paymentSchema = new mongoose.Schema ({
      type: Number,
      required: true
    },
+   mpesaRef: {
+     type: String
+   },
+   checkoutRequestId: {
+     type: String
+   },
      status : {
       type : String,
       enum: ['pending', 'completed', 'failed'],

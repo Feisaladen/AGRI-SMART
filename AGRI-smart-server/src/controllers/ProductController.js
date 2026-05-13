@@ -6,6 +6,10 @@ const createProduct = async (req, res) => {
     try {
         console.log('Creating product with data:', req.body)
         const { clerkId, name, price, quantity, unit, description, photo } = req.body
+
+        if (!name?.trim() || !price || !quantity || !unit?.trim()) {
+            return res.status(400).json({ message: 'Name, price, quantity, and unit are required.' })
+        }
         
         const user = await User.findOne({ clerkId })
         if (!user) {
@@ -34,6 +38,9 @@ const createProduct = async (req, res) => {
         res.status(201).json(product)
     } catch (error) {
         console.error('Error creating product:', error)
+        if (error.code === 11000) {
+            return res.status(409).json({ message: 'A product with that name already exists. Please use a different name.' })
+        }
         res.status(500).json({ message: error.message })
     }
 }

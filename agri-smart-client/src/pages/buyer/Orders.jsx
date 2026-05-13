@@ -28,9 +28,9 @@ const Orders = () => {
   return (
     <div className="flex min-h-screen bg-stone-100">
       <BuyerSidebar />
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-8">
         <div className="mx-auto max-w-4xl space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-2xl font-semibold text-stone-900">My Orders 📦</h1>
               <p className="mt-1 text-sm text-stone-500">Track all your purchases in one place.</p>
@@ -57,7 +57,7 @@ const Orders = () => {
                 const statusStyle = STATUS_STYLES[order.status] || 'bg-stone-100 text-stone-700 ring-stone-200'
                 return (
                   <div key={order._id} className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div>
                         <p className="text-lg font-semibold text-stone-900">{order.product?.name || 'Product'}</p>
                         <p className="mt-1 text-sm text-stone-400">Ordered on {new Date(order.createdAt).toLocaleDateString()}</p>

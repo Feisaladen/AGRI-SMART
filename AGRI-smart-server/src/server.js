@@ -12,11 +12,29 @@ const dashboardRoute = require('./routes/dashboardRoute')
 const marketplaceRoute = require('./routes/marketplaceRoute')
 const checkoutRoute = require('./routes/checkoutRoute')
 const aiRoute = require('./routes/AI-Route')
+const mpesaRoute = require('./routes/mpesaRoute')
+const Product = require('./product')
 
 
 
 
 const app = express()
+
+const removeLegacyProductNameIndex = async () => {
+    try {
+        const indexes = await Product.collection.indexes()
+        const hasLegacyNameIndex = indexes.some((index) => index.name === 'name_1' && index.unique)
+
+        if (hasLegacyNameIndex) {
+            await Product.collection.dropIndex('name_1')
+            console.log('Dropped legacy unique index: products.name_1')
+        }
+    } catch (error) {
+        if (error.codeName !== 'NamespaceNotFound' && error.code !== 27) {
+            console.log('Unable to drop legacy product name index:', error.message)
+        }
+    }
+}
 
 // Rate limiting
 const limiter = rateLimit({
@@ -45,11 +63,17 @@ app.use('/api/farms', farmRoute)
 app.use('/api/products', productRoute)
 app.use('/api/orders', orderRoute)
 app.use('/api/payments', paymentRoute)
+app.use('/api/payments', mpesaRoute)
 app.use('/api/dashboard', dashboardRoute)
 app.use('/api/marketplace', marketplaceRoute)
 app.use('/api/checkout', checkoutRoute)
 app.use('/api/ai', aiLimiter, aiRoute)
-  
+
 // connect to the database .... ..... 
-mongoose.connect(process.env.MONGO_URI).then(() => console.log('connected to database')).catch(err => console.log('error connecting to database:', err))
+mongoose.connect(process.env.MONGO_URI)
+    .then(async () => {
+        console.log('connected to database')
+        await removeLegacyProductNameIndex()
+    })
+    .catch(err => console.log('error connecting to database:', err))
 app.listen(5000, () => console.log('Server running on port 5000'))

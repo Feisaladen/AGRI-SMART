@@ -43,6 +43,11 @@ const Dashboard = () => {
         })
       } catch (error) {
         console.log(error)
+        if (error.response?.status === 404 && error.response?.data?.message?.toLowerCase().includes('farm')) {
+          toast.error('Create your farm profile first.')
+          navigate('/farm-profile')
+          return
+        }
         toast.error('Failed to load dashboard')
       } finally {
         setLoading(false)
@@ -62,7 +67,7 @@ const Dashboard = () => {
           notificationPath="/farmer/orders"
         />
 
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-8">
           <div className="mx-auto max-w-5xl space-y-6">
 
             {loading ? <DashboardSkeleton /> : (
@@ -104,7 +109,7 @@ const Dashboard = () => {
 
                 {/* Recent Orders */}
                 <section className="rounded-2xl bg-white p-6 shadow-sm">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <h2 className="text-lg font-semibold text-stone-900">Recent Orders</h2>
                       <p className="mt-1 text-sm text-stone-500">Latest activity from your buyers.</p>
@@ -125,7 +130,7 @@ const Dashboard = () => {
                   ) : (
                     <div className="mt-5 space-y-3">
                       {dashboard.recentOrders.map((order, index) => (
-                        <div key={order._id || index} className="flex items-center justify-between rounded-xl border border-stone-100 bg-stone-50 px-5 py-4">
+                        <div key={order._id || index} className="flex flex-col gap-3 rounded-xl border border-stone-100 bg-stone-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                           <div>
                             <p className="font-medium text-stone-900">{order.product?.name || 'Product'}</p>
                             <p className="mt-1 text-sm text-stone-500">KSh {Number(order.totalprice || 0).toLocaleString()}</p>

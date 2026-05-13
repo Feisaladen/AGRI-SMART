@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useUser } from '@clerk/clerk-react'
 import axios from '../../api/axios'
 import toast from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 import FarmerSidebar from '../../components/FarmerSidebar'
 import Topbar from '../../components/Topbar'
 import { DashboardSkeleton } from '../../components/Skeleton'
@@ -14,6 +15,7 @@ const STATUS_STYLES = {
 
 const PaymentHistory = () => {
   const { user } = useUser()
+  const navigate = useNavigate()
   const [payments, setPayments] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
@@ -22,9 +24,17 @@ const PaymentHistory = () => {
     if (!user) return
     axios.get(`/api/payments/farmer/${user.id}`)
       .then(res => setPayments(Array.isArray(res.data) ? res.data : []))
-      .catch(() => toast.error('Failed to load payments'))
+      .catch((error) => {
+        console.log(error)
+        if (error.response?.status === 404 && error.response?.data?.message?.toLowerCase().includes('farm')) {
+          toast.error('Create your farm profile first.')
+          navigate('/farm-profile')
+          return
+        }
+        toast.error('Failed to load payments')
+      })
       .finally(() => setLoading(false))
-  }, [user])
+  }, [navigate, user])
 
   const totalEarnings = payments
     .filter(p => p.status === 'completed')
@@ -44,7 +54,7 @@ const PaymentHistory = () => {
       <FarmerSidebar dashboard={{}} />
       <div className="flex flex-1 flex-col">
         <Topbar title="Payment History" />
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-8">
           <div className="mx-auto max-w-5xl space-y-6">
 
             {/* Header */}

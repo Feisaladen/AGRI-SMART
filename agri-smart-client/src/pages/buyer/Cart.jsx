@@ -9,7 +9,7 @@ const Cart = () => {
   return (
     <div className="flex min-h-screen bg-stone-100">
       <BuyerSidebar />
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-8">
         <div className="mx-auto max-w-4xl space-y-6">
           <div>
             <h1 className="text-2xl font-semibold text-stone-900">My Cart 🛒</h1>
@@ -33,7 +33,7 @@ const Cart = () => {
               <div className="space-y-4">
                 {cartItems.map((item) => (
                   <div key={item._id} className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div className="flex gap-4">
                         <div className="h-16 w-16 overflow-hidden rounded-xl bg-stone-100">
                           {item.photo
@@ -47,13 +47,15 @@ const Cart = () => {
                           <p className="mt-1 text-sm font-medium text-stone-700">KSh {Number(item.price * item.quantity).toLocaleString()}</p>
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => removeFromCart(item._id)}
-                        className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-600 transition hover:bg-rose-100"
-                      >
-                        Remove
-                      </button>
+                      <div className="sm:self-start">
+                        <button
+                          type="button"
+                          onClick={() => removeFromCart(item._id)}
+                          className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-600 transition hover:bg-rose-100"
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

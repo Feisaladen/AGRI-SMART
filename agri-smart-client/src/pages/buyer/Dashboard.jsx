@@ -45,7 +45,7 @@ const Dashboard = () => {
           notificationPath="/buyer/orders"
         />
 
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:pb-8">
           <div className="mx-auto max-w-5xl space-y-6">
 
             {loading ? <DashboardSkeleton /> : (
